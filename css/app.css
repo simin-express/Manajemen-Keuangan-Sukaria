@@ -149,12 +149,15 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
   .tx-list-tools{align-items:flex-start;flex-direction:column}
   .tx-search{width:100%}
   .tx-search-count{white-space:normal}
-  .dashboard-topbar{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+  .dashboard-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"identity period" "filters filters";gap:10px}
+  .dash-identity{grid-area:identity}
   .dashboard-topbar h1{font-size:24px}
   .dashboard-date{font-size:11px}
-  .dashboard-topbar .ctl{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:8px}
+  .dashboard-topbar .ctl{display:contents}
   .ctl{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:8px}
-  .seg{justify-self:start}
+  .dashboard-topbar .seg{grid-area:period;align-self:start;justify-self:end}
+  .dashboard-topbar .seg a{padding:6px 8px;font-size:11px}
+  .dashboard-topbar .period-selectors{grid-area:filters}
   .period-selectors{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1fr) 36px;width:100%;gap:6px}
   .period-selectors .month{order:1;min-width:0}
   .period-selectors .year{order:2;min-width:0}
