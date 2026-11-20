@@ -12,6 +12,15 @@ h1{margin:0;font-size:24px;letter-spacing:-.02em}h2{margin:0 0 12px;font-size:16
 .side a.on{background:#E3F3F7;color:#0E7490}
 .side a.sub{padding:6px 12px 6px 43px;font-weight:500;font-size:13px}
 .side svg{width:19px;height:19px;flex:none}
+.side .nav-group-toggle{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:2px;padding:10px 12px;border:0;border-radius:12px;background:none;color:#334155;font-size:14px;font-weight:600;text-align:left;cursor:pointer}
+.side .nav-group-toggle:hover{background:#F3F5F9}
+.side .nav-group-toggle.on{background:#E3F3F7;color:#0E7490}
+.nav-group-toggle span{flex:1}
+.nav-group-toggle svg:last-child{width:15px;height:15px;transition:transform .18s ease}
+.nav-group.open .nav-group-toggle svg:last-child{transform:rotate(180deg)}
+.nav-submenu{display:grid}
+.nav-submenu[hidden]{display:none}
+.nav-submenu a.sub{margin:0}
 .me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:#F3F5F9;font-size:13px}
 .me b{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#0E7490;color:#fff}
 .me small{display:block;color:#475569}
@@ -68,11 +77,32 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
 .side .logo{margin-bottom:20px;line-height:1.15}
 .side .logo small{display:block;margin-top:5px;color:#475569;font-size:11px;font-weight:600;letter-spacing:.02em}
 .period-selectors{display:flex;align-items:center;gap:8px}
-.period-selectors select{width:auto}
-.period-selectors .month{min-width:120px}
-.period-selectors .year{min-width:84px}
-.filter-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 12px;border:1px solid #DDE3EA;border-radius:12px;background:#fff;color:#0B3B4A;font-weight:700;white-space:nowrap;cursor:pointer}
-.filter-btn svg{width:17px;height:17px}
+.period-selectors select{width:auto;height:38px;padding:0 10px;font-size:13px}
+.period-selectors .month{min-width:116px}
+.period-selectors .year{min-width:76px}
+.filter-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;min-height:38px;padding:0;border:1px solid #DDE3EA;border-radius:11px;background:#fff;color:#0B3B4A;cursor:pointer}
+.filter-btn svg{width:16px;height:16px}
+.filter-btn span{display:none}
+.kpi .k{display:flex;align-items:center;gap:9px}
+.kpi-icon{display:inline-grid;place-items:center;flex:none;width:29px;height:29px;border-radius:10px;background:#E3F3F7;color:#0E7490}
+.kpi-icon.orange{background:#FFF0E7;color:#E87538}
+.kpi-icon svg{width:16px;height:16px}
+.hero .kpi-icon{background:rgba(255,255,255,.14);color:#fff}
+.recent-card h2{margin-bottom:12px}
+.recent-row{justify-content:flex-start;gap:11px}
+.tx-icon{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:11px;background:#E3F3F7;color:#0E7490}
+.tx-icon.out{background:#FFF0E7;color:#E87538}
+.tx-icon svg{width:17px;height:17px}
+.recent-detail{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-detail small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-row strong{white-space:nowrap;font-size:12px}
+.settings-card{max-width:560px;margin-bottom:16px}
+.settings-card h2{margin:0 0 14px}
+.settings-card label{display:block;margin-bottom:14px;font-size:13px;font-weight:700}
+.settings-card input{display:block;margin-top:6px}
+.settings-card .btn{min-height:40px;padding:0 16px}
+.settings-card .ghost{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px}
+.settings-card .ghost svg{width:17px;height:17px}
 .mobile-nav{display:none}
 .report-filter{margin-bottom:16px;padding:14px}
 .report-filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
@@ -99,12 +129,12 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
   .top{align-items:flex-start}
   .ctl{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:8px}
   .seg{justify-self:start}
-  .period-selectors{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1fr) 38px;width:100%;gap:6px}
+  .period-selectors{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1fr) 36px;width:100%;gap:6px}
   .period-selectors .year{order:1;min-width:0}
   .period-selectors .month{order:2;min-width:0}
-  .period-selectors.year-view{grid-template-columns:minmax(0,1fr) 38px}
-  .period-selectors select{height:40px;min-width:0;padding:8px}
-  .filter-btn{order:3;width:38px;min-height:40px;padding:0}
+  .period-selectors.year-view{grid-template-columns:minmax(0,1fr) 36px}
+  .period-selectors select{height:38px;min-width:0;padding:0 8px;font-size:12px}
+  .filter-btn{order:3;width:36px;min-height:38px;padding:0}
   .period-selectors.year-view .filter-btn{order:2}
   .filter-btn span{display:none}
   .ctl>.btn{justify-self:end}
