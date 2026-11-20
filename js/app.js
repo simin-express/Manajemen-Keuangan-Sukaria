@@ -23,6 +23,12 @@ const IC = {
   filter: '<path d="M4 5h16l-6.5 7v5l-3 2v-7z"/>',
   more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
   password: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1-1.6 2.8-.2-.1a1.7 1.7 0 00-1.8.1 1.7 1.7 0 00-.9 1.5v.2h-3.2v-.2a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8-.1l-.2.1-1.6-2.8.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H6v-3.2h.2a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1 1.6-2.8.2.1a1.7 1.7 0 001.8-.1 1.7 1.7 0 00.9-1.5V3h3.2v.2a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8.1l.2-.1 1.6 2.8-.1.1a1.7 1.7 0 00-.3 1.9 1.7 1.7 0 001.5 1h.2v3.2h-.2a1.7 1.7 0 00-1.5 1z"/>',
+  wallet: '<rect x="3" y="6" width="18" height="15" rx="2"/><path d="M3 9V6a2 2 0 012-2h13M16 14h5"/><circle cx="16" cy="14" r=".7"/>',
+  income: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  expense: '<path d="M12 5v14m-6-6 6 6 6-6"/>',
+  trend: '<path d="M4 17l6-6 4 4 6-8"/><path d="M14 7h6v6"/>',
+  chevron: '<path d="m7 10 5 5 5-5"/>',
   backup: '<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>',
   logout: '<path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/>'
 };
@@ -101,27 +107,30 @@ async function backup() {
 }
 
 function shell(name, q, banks) {
-  const adm = ME.level === 'administrator', cur = q.get('bank');
+  const adm = ME.level === 'administrator', cur = q.get('bank'), txPages = ['transaksi', 'hutang', 'piutang'];
   const A = (h, label, ic, on, sub) => `<a href="#/${h}" class="${on ? 'on' : ''}${sub ? ' sub' : ''}">${sub ? '' : ico(ic)}${label}</a>`;
   return `<div class="app"><aside class="side"><p class="logo">Warung Sukaria<small>Manajemen Keuangan</small></p>
 ${A('dashboard', 'Dashboard', 'dashboard', name === 'dashboard')}
 ${A('kategori', 'Data Kategori', 'kategori', name === 'kategori')}
-${A('transaksi', 'Data Transaksi', 'transaksi', name === 'transaksi' && !cur)}
+<div class="nav-group${txPages.includes(name) ? ' open' : ''}">
+<button class="nav-group-toggle${txPages.includes(name) ? ' on' : ''}" id="tx-toggle" type="button" aria-expanded="${txPages.includes(name)}" aria-controls="tx-submenu">${ico('transaksi')}<span>Data Transaksi</span>${ico('chevron')}</button>
+<div class="nav-submenu" id="tx-submenu"${txPages.includes(name) ? '' : ' hidden'}>
+${A('transaksi', 'Semua Transaksi', '', name === 'transaksi' && !cur, true)}
+${A('hutang', 'Hutang', '', name === 'hutang', true)}
+${A('piutang', 'Piutang', '', name === 'piutang', true)}
 ${banks.map(b => A('transaksi?bank=' + b.id, esc(b.nama), '', name === 'transaksi' && cur == b.id, true)).join('')}
-${A('hutang', 'Hutang', 'hutang', name === 'hutang')}
-${A('piutang', 'Piutang', 'hutang', name === 'piutang')}
+</div></div>
 ${A('bank', 'Rekening Bank', 'bank', name === 'bank')}
 ${A('laporan', 'Laporan', 'report', name === 'laporan')}
-${A('password', 'Ganti Password', 'password', name === 'password')}
-${adm ? `<button class="lnk" id="bk">${ico('backup')}Unduh Backup</button>` : ''}
+${A('pengaturan', 'Pengaturan', 'settings', ['pengaturan', 'password'].includes(name))}
 <button class="lnk" id="lo">${ico('logout')}Logout</button>
 <div class="me"><b>${esc((ME.nama || '?')[0].toUpperCase())}</b><span>${esc(ME.nama)}<small>${esc(ME.level)}</small></span></div>
 </aside><main id="main"></main></div>
 <nav class="mobile-nav" aria-label="Navigasi mobile">
 ${A('dashboard', 'Ringkasan', 'dashboard', name === 'dashboard')}
 ${A('transaksi', 'Transaksi', 'transaksi', name === 'transaksi')}
-${A('hutang', 'Hutang', 'hutang', name === 'hutang')}
 ${A('laporan', 'Laporan', 'report', name === 'laporan')}
+${A('pengaturan', 'Pengaturan', 'settings', ['pengaturan', 'password'].includes(name))}
 <button id="more" type="button" aria-expanded="false">${ico('more')}<span>Lainnya</span></button>
 </nav>`;
 }
@@ -139,7 +148,15 @@ async function render() {
     const banks = await api('bank?select=id,nama&order=id');
     document.body.classList.toggle('print-report', name === 'laporan');
     $('#app').innerHTML = shell(name, q, banks);
-    $('#lo').onclick = logout; if ($('#bk')) $('#bk').onclick = () => backup().catch(e => alert(e.message));
+    $('#lo').onclick = logout;
+    if ($('#bk')) $('#bk').onclick = () => backup().catch(e => alert(e.message));
+    $('#tx-toggle').onclick = () => {
+      const open = $('#tx-toggle').getAttribute('aria-expanded') !== 'true';
+      $('#tx-toggle').setAttribute('aria-expanded', String(open));
+      $('#tx-toggle').classList.toggle('on', open);
+      $('#tx-submenu').hidden = !open;
+      $('.nav-group').classList.toggle('open', open);
+    };
     $('#more').onclick = () => {
       const open = $('.side').classList.toggle('open');
       $('#more').setAttribute('aria-expanded', String(open));
@@ -301,12 +318,12 @@ PAGES.dashboard = async (box, q) => {
 <div class="ctl"><div class="seg"><a href="#/dashboard?p=tahun&y=${Y}" class="${per === 'tahun' ? 'on' : ''}">Tahunan</a><a href="#/dashboard?p=bulan&y=${Y}&m=${M}" class="${per === 'bulan' ? 'on' : ''}">Bulanan</a></div>
 <div class="period-selectors ${per === 'bulan' ? 'month-view' : 'year-view'}">${per === 'bulan' ? `<select id="sm" class="month" aria-label="Bulan">${months}</select>` : ''}<select id="sy" class="year" aria-label="Tahun">${years}</select><button class="filter-btn" id="apply-period" type="button" aria-label="Terapkan filter cashflow" title="Terapkan filter">${ico('filter')}<span>Terapkan</span></button></div>
 <a class="btn" href="#/transaksi?tambah=1" style="display:grid;place-items:center">+ Transaksi baru</a></div></div>
-<div class="kpi"><div class="card hero"><p class="k">Saldo Kas</p><p class="v">${rp(bk.reduce((t, x) => t + +x.saldo, 0))}</p><p class="s">Total semua rekening dan cash</p></div>
-<div class="card"><p class="k">Pemasukan</p><p class="v pos">${rp(I)}</p><p class="s">${lbl}</p></div>
-<div class="card"><p class="k">Pengeluaran</p><p class="v neg">${rp(E)}</p><p class="s">${lbl}</p></div>
-<div class="card"><p class="k">Laba Bersih</p><p class="v">${rp(I - E)}</p><p class="s">Pemasukan − pengeluaran</p></div></div>
+<div class="kpi"><div class="card hero"><p class="k"><span class="kpi-icon">${ico('wallet')}</span>Saldo Kas</p><p class="v">${rp(bk.reduce((t, x) => t + +x.saldo, 0))}</p><p class="s">Total semua rekening dan cash</p></div>
+<div class="card"><p class="k"><span class="kpi-icon">${ico('income')}</span>Pemasukan</p><p class="v pos">${rp(I)}</p><p class="s">${lbl}</p></div>
+<div class="card"><p class="k"><span class="kpi-icon orange">${ico('expense')}</span>Pengeluaran</p><p class="v neg">${rp(E)}</p><p class="s">${lbl}</p></div>
+<div class="card"><p class="k"><span class="kpi-icon">${ico('trend')}</span>Laba Bersih</p><p class="v">${rp(I - E)}</p><p class="s">Pemasukan − pengeluaran</p></div></div>
 <div class="grid"><div><div class="card"><h2>Cash flow ${per === 'bulan' ? lbl : 'bulanan · ' + lbl}</h2><div class="lg2"><span><i style="background:#0E7490"></i>Pemasukan</span><span><i style="background:#EA580C"></i>Pengeluaran</span></div>${chart(lab, inc, exp)}</div>
-<div class="card" style="margin-top:16px"><h2>Transaksi terbaru</h2>${rec.map(r => `<div class="row"><span>${esc(r.keterangan || 'Tanpa keterangan')}<small>${tgl(r.tanggal)} · ${esc(r.bank ? r.bank.nama : '-')}</small></span><strong class="${r.jenis === 'Pemasukan' ? 'pos' : 'neg'}">${r.jenis === 'Pemasukan' ? '+' : '−'} ${rp(r.nominal)}</strong></div>`).join('') || '<p class="mut">Belum ada transaksi.</p>'}</div></div>
+<div class="card recent-card" style="margin-top:16px"><h2>Transaksi terbaru</h2>${rec.map(r => `<div class="row recent-row"><span class="tx-icon${r.jenis === 'Pengeluaran' ? ' out' : ''}">${ico(r.jenis === 'Pengeluaran' ? 'expense' : 'income')}</span><span class="recent-detail">${esc(r.keterangan || 'Tanpa keterangan')}<small>${tgl(r.tanggal)} · ${esc(r.bank ? r.bank.nama : '-')}</small></span><strong class="${r.jenis === 'Pemasukan' ? 'pos' : 'neg'}">${r.jenis === 'Pemasukan' ? '+' : '−'} ${rp(r.nominal)}</strong></div>`).join('') || '<p class="mut">Belum ada transaksi.</p>'}</div></div>
 <div><div class="card"><h2>Saldo</h2>${bk.map(x => `<div class="row"><span>${esc(x.nama)}</span><strong>${rp(x.saldo)}</strong></div>`).join('')}<div class="row"><span>Hutang</span><strong class="neg">${rp(sum(hu))}</strong></div><div class="row"><span>Piutang</span><strong class="pos">${rp(sum(pi))}</strong></div></div>
 <div class="note"><h2>Pesanan</h2><textarea id="nt" aria-label="Pesanan yang akan datang" placeholder="Tulis pesanan yang akan datang…">${esc(note[0] ? note[0].isi : '')}</textarea></div></div></div>`;
   $('#apply-period').onclick = () => {
@@ -316,10 +333,11 @@ PAGES.dashboard = async (box, q) => {
   let tm; $('#nt').oninput = e => { clearTimeout(tm); tm = setTimeout(() => api('catatan?on_conflict=user_id', { method: 'POST', prefer: 'resolution=merge-duplicates', body: { user_id: S.u, isi: e.target.value } }).catch(() => { }), 800); };
 };
 
-PAGES.password = box => {
-  box.innerHTML = `<div class="top"><h1>Ganti Password</h1></div><form id="pf" class="card" style="max-width:420px"><div class="dlg" style="padding:0;max-height:none"><label>Password baru<input name="p" type="password" minlength="8" autocomplete="new-password" required></label></div><button class="btn">Simpan</button><p id="pm" class="mut"></p></form>`;
+PAGES.pengaturan = box => {
+  box.innerHTML = `<div class="top"><h1>Pengaturan</h1></div><form id="pf" class="card settings-card"><h2>Ganti Password</h2><label>Password baru<input name="p" type="password" minlength="8" autocomplete="new-password" required></label><button class="btn">Simpan Password</button><p id="pm" class="mut"></p></form>${ME.level === 'administrator' ? `<section class="card settings-card"><h2>Backup Data</h2><p class="mut">Unduh salinan data kategori, rekening, transaksi, hutang, dan piutang dalam format JSON. Simpan file dengan aman.</p><button class="ghost" id="bk" type="button">${ico('backup')}Unduh Backup</button></section>` : ''}`;
   $('#pf').onsubmit = async e => { e.preventDefault(); try { await authCall('user', { password: e.target.p.value }, 'PUT', await tok()); $('#pm').textContent = 'Password berhasil diganti.'; e.target.reset(); } catch (x) { $('#pm').textContent = x.message; } };
 };
+PAGES.password = PAGES.pengaturan;
 
 window.addEventListener('hashchange', render);
 render();
