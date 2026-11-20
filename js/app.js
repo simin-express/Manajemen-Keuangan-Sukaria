@@ -86,7 +86,7 @@ function modal(html) {
 function closeModal() { const m = $('#mod'); if (m) m.remove(); }
 
 function login(msg) {
-  $('#app').innerHTML = `<div class="lg"><form id="lf" class="lbox"><div class="brand"><b>${ico('dashboard')}</b><div><small>SISTEM INFORMASI</small><h1>Keuangan</h1></div></div>${msg ? `<div class="alert">${esc(msg)}</div>` : ''}<label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button class="btn wide">Masuk</button></form></div>`;
+  $('#app').innerHTML = `<div class="lg"><form id="lf" class="lbox"><div class="brand"><b>${ico('dashboard')}</b><div><small>SISTEM INFORMASI</small><h1>Keuangan Warung Sukaria</h1></div></div>${msg ? `<div class="alert">${esc(msg)}</div>` : ''}<label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button class="btn wide">Masuk</button></form></div>`;
   $('#lf').onsubmit = async e => {
     e.preventDefault();
     try {
