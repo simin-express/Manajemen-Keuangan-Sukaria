@@ -313,11 +313,16 @@ PAGES.dashboard = async (box, q) => {
   let I = 0, E = 0;
   tx.forEach(t => { const i = (per === 'bulan' ? +t.tanggal.slice(8, 10) : +t.tanggal.slice(5, 7)) - 1, v = +t.nominal || 0; if (t.jenis === 'Pemasukan') { inc[i] += v; I += v; } else { exp[i] += v; E += v; } });
   const lbl = per === 'bulan' ? BLN[M - 1] + ' ' + Y : 'Tahun ' + Y;
+  const periodTitle = per === 'bulan' ? BLN_PENUH[M - 1] + ' ' + Y : 'Tahun ' + Y;
+  const dateLabel = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
   const years = Array.from({ length: y1 - y0 + 1 }, (_, i) => y1 - i).map(y => `<option${y === Y ? ' selected' : ''}>${y}</option>`).join('');
   const months = BLN_PENUH.map((m, i) => `<option value="${i + 1}"${i + 1 === M ? ' selected' : ''}>${m}</option>`).join('');
-  box.innerHTML = `<div class="top"><div><h1>Ringkasan Kas</h1><p class="mut">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p></div>
-<div class="ctl"><div class="seg"><a href="#/dashboard?p=tahun&y=${Y}" class="${per === 'tahun' ? 'on' : ''}">Tahunan</a><a href="#/dashboard?p=bulan&y=${Y}&m=${M}" class="${per === 'bulan' ? 'on' : ''}">Bulanan</a></div>
-<div class="period-selectors ${per === 'bulan' ? 'month-view' : 'year-view'}">${per === 'bulan' ? `<select id="sm" class="month" aria-label="Bulan">${months}</select>` : ''}<select id="sy" class="year" aria-label="Tahun">${years}</select><button class="filter-btn" id="apply-period" type="button" aria-label="Terapkan filter cashflow" title="Terapkan filter">${ico('filter')}<span>Terapkan</span></button></div>
+  box.innerHTML = `<div class="top dashboard-topbar"><div class="dash-identity">
+<div class="dash-title"><span class="dash-mark">WS</span><div><p class="eyebrow">WARUNG SUKARIA</p><h1>Ringkasan Kas</h1></div></div>
+<span class="date-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>${esc(dateLabel)}</span></div>
+<div class="ctl"><div class="period-panel"><div class="period-panel-head"><div class="period-summary"><small>PERIODE AKTIF</small><strong>${periodTitle}</strong></div>
+<div class="seg"><a href="#/dashboard?p=tahun&y=${Y}" class="${per === 'tahun' ? 'on' : ''}">Tahunan</a><a href="#/dashboard?p=bulan&y=${Y}&m=${M}" class="${per === 'bulan' ? 'on' : ''}">Bulanan</a></div></div>
+<div class="period-selectors ${per === 'bulan' ? 'month-view' : 'year-view'}">${per === 'bulan' ? `<select id="sm" class="month" aria-label="Bulan">${months}</select>` : ''}<select id="sy" class="year" aria-label="Tahun">${years}</select><button class="filter-btn" id="apply-period" type="button" aria-label="Terapkan filter cashflow" title="Terapkan filter">${ico('filter')}<span>Terapkan</span></button></div></div>
 <a class="btn desktop-add" href="#/transaksi?tambah=1">+ Transaksi baru</a></div></div>
 <div class="kpi"><div class="card hero"><p class="k"><span class="kpi-icon">${ico('wallet')}</span>Saldo Kas</p><p class="v">${rp(bk.reduce((t, x) => t + +x.saldo, 0))}</p><p class="s">Total semua rekening dan cash</p></div>
 <div class="card"><p class="k"><span class="kpi-icon">${ico('income')}</span>Pemasukan</p><p class="v pos">${rp(I)}</p><p class="s">${lbl}</p></div>
