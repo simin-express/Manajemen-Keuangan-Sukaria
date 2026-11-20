@@ -35,6 +35,11 @@ Authentication > Users > Add user (Auto Confirm). Pengguna baru otomatis berleve
 - **administrator**: semua fitur, termasuk Kategori dan Rekening Bank.
 - **manajemen**: transaksi, hutang, piutang; hanya melihat Kategori dan Rekening Bank.
 
+## Dashboard dan laporan
+- Dashboard dibuka dalam tampilan bulanan dengan cash flow harian. Filter bulan dan tahun diterapkan melalui tombol **Terapkan**.
+- Halaman **Laporan** tersedia di menu, dengan filter periode, rekening, jenis, dan kategori, serta opsi cetak atau simpan sebagai PDF.
+- Nominal transaksi ditampilkan dengan pemisah ribuan. Data nominal tetap disimpan sebagai angka di Supabase.
+
 ## Penting
 - Situs GitHub Pages bersifat publik. Yang bisa dilihat umum hanya kodenya; data tetap terkunci di balik login.
 - Paket gratis Supabase tidak punya backup otomatis. Admin punya tombol **Unduh Backup** di menu samping; unduh rutin (misalnya seminggu sekali).
@@ -42,7 +47,6 @@ Authentication > Users > Add user (Auto Confirm). Pengguna baru otomatis berleve
 - Saldo rekening dihitung otomatis oleh database saat transaksi ditambah, diubah, atau dihapus.
 
 ## Belum ada di versi ini
-- Halaman Laporan (cetak/PDF).
 - Halaman Data Pengguna (pengguna dikelola lewat Supabase seperti langkah 5).
 - Pemindahan data dari aplikasi PHP lama.
 
