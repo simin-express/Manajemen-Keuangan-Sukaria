@@ -27,22 +27,14 @@ h1{margin:0;font-size:24px;letter-spacing:-.02em}h2{margin:0 0 12px;font-size:16
 main{flex:1;min-width:0;padding:22px 28px}
 .top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:18px}
 .ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.dashboard-topbar{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.45fr);align-items:center;gap:18px;padding:18px;border:1px solid rgba(14,116,144,.12);border-radius:20px;background:linear-gradient(118deg,#fff 0%,#fff 48%,#E8F6F4 100%);box-shadow:0 10px 26px rgba(15,23,42,.045)}
-.dash-identity{min-width:0}
-.dash-title{display:flex;align-items:center;gap:12px;min-width:0}
-.dash-mark{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:14px;background:#0E7490;color:#fff;font-size:13px;font-weight:800;letter-spacing:-.5px;box-shadow:0 6px 14px rgba(14,116,144,.18)}
-.dash-title .eyebrow{margin:0 0 4px;color:#0E7490;font-size:10px;font-weight:800;letter-spacing:.1em}
-.dash-title h1{font-size:25px;white-space:nowrap}
+.dashboard-topbar{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:20px;margin-bottom:16px}
+.dash-identity{flex:none;min-width:0}
+.dashboard-topbar h1{font-size:26px;white-space:nowrap}
 .dashboard-date{margin:4px 0 0;font-size:12px}
-.dashboard-topbar .ctl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0}
-.period-panel{display:grid;gap:9px;min-width:0;padding:10px 11px;border:1px solid #E8ECF1;border-radius:15px;background:rgba(255,255,255,.9)}
-.period-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.period-summary small{display:block;margin-bottom:2px;color:#475569;font-size:9px;font-weight:800;letter-spacing:.08em}
-.period-summary strong{color:#0F172A;font-size:12px}
-.period-panel .period-selectors{flex:1;justify-content:flex-end;gap:6px}
-.period-panel .period-selectors .month{flex:1;min-width:110px}
-.period-panel .period-selectors .year{min-width:78px}
-.desktop-add{white-space:nowrap}
+.dashboard-topbar .ctl{display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:8px;flex:1;min-width:0}
+.period-selectors .month{min-width:138px}
+.period-selectors .year{min-width:82px}
+.desktop-add{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;white-space:nowrap}
 .seg{display:flex;padding:3px;background:#fff;border:1px solid #E8ECF1;border-radius:999px}
 .seg a{padding:8px 18px;border-radius:999px;font-weight:600;font-size:14px}
 .seg a.on{background:#0E7490;color:#fff}
@@ -94,8 +86,8 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
 .side .logo small{display:block;margin-top:5px;color:#475569;font-size:11px;font-weight:600;letter-spacing:.02em}
 .period-selectors{display:flex;align-items:center;gap:8px}
 .period-selectors select{width:auto;height:38px;padding:0 10px;font-size:13px}
-.period-selectors .month{min-width:116px}
-.period-selectors .year{min-width:76px}
+.period-selectors .month{min-width:138px}
+.period-selectors .year{min-width:82px}
 .filter-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;min-height:38px;padding:0;border:1px solid #DDE3EA;border-radius:11px;background:#fff;color:#0B3B4A;cursor:pointer}
 .filter-btn svg{width:16px;height:16px}
 .filter-btn span{display:none}
@@ -136,8 +128,8 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
 .report-table{overflow:auto}
 .report-top{align-items:center}
 @media(max-width:1050px){
-  .dashboard-topbar{grid-template-columns:minmax(0,1fr)}
-  .dashboard-topbar .ctl{grid-template-columns:minmax(0,1fr) auto}
+  .dashboard-topbar{align-items:flex-start;flex-wrap:wrap}
+  .dashboard-topbar .ctl{flex-wrap:wrap;justify-content:flex-start}
   .report-filters{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:760px){
@@ -147,27 +139,15 @@ td{padding:11px 8px;border-top:1px solid #EEF1F5}
   .side.open{display:flex}
   main{padding:16px 14px 24px}
   .top{align-items:flex-start}
-  .dashboard-topbar{grid-template-columns:minmax(0,1fr);gap:12px;padding:14px;border-radius:18px}
-  .dash-identity{align-items:flex-start;flex-direction:column;gap:9px}
-  .dash-title{gap:10px}
-  .dash-mark{flex-basis:40px;height:40px;border-radius:13px;font-size:12px}
-  .dash-title .eyebrow{font-size:9px}
-  .dash-title h1{font-size:23px}
+  .dashboard-topbar{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+  .dashboard-topbar h1{font-size:24px}
   .dashboard-date{font-size:11px}
   .dashboard-topbar .ctl{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:8px}
-  .period-panel{gap:8px;padding:9px;border-radius:13px}
-  .period-panel .period-selectors{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1.2fr) 36px;width:100%;gap:6px}
-  .period-panel .period-selectors.year-view{grid-template-columns:minmax(0,1fr) 36px}
-  .period-panel .period-selectors select{height:37px;min-width:0;padding:0 8px;font-size:11px}
-  .period-panel .period-selectors .year{order:1}
-  .period-panel .period-selectors .month{order:2}
-  .period-panel .filter-btn{order:3;width:36px;min-height:37px}
-  .dashboard-topbar .ctl>.desktop-add{display:none!important}
   .ctl{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:8px}
   .seg{justify-self:start}
   .period-selectors{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1fr) 36px;width:100%;gap:6px}
-  .period-selectors .year{order:1;min-width:0}
-  .period-selectors .month{order:2;min-width:0}
+  .period-selectors .month{order:1;min-width:0}
+  .period-selectors .year{order:2;min-width:0}
   .period-selectors.year-view{grid-template-columns:minmax(0,1fr) 36px}
   .period-selectors select{height:38px;min-width:0;padding:0 8px;font-size:12px}
   .filter-btn{order:3;width:36px;min-height:38px;padding:0}
