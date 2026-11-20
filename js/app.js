@@ -17,6 +17,7 @@ const IC = {
   dashboard: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
   kategori: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
   transaksi: '<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
   hutang: '<path d="M12 3v18M17 7H9.5a3 3 0 000 6h5a3 3 0 010 6H6"/>',
   bank: '<path d="M3 10l9-6 9 6M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18"/>',
   report: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 12h5M10 16h5"/>',
@@ -190,7 +191,47 @@ async function crud(k, box, q) {
   const c = CF[k], w = !c.adm || ME.level === 'administrator';
   let path = c.sel; if (k === 'transaksi' && q.get('bank')) path += '&bank_id=eq.' + (parseInt(q.get('bank'), 10) || 0);
   const rows = await api(path);
-  box.innerHTML = `<div class="top"><h1>${c.t}</h1>${w ? '<button class="btn" id="add">+ Tambah</button>' : ''}</div><div class="card tbl"><table><thead><tr>${c.cols.map(x => `<th class="${x[2] || ''}">${x[0]}</th>`).join('')}${w ? '<th></th>' : ''}</tr></thead><tbody>${rows.map((r, i) => `<tr>${c.cols.map(x => `<td class="${x[2] || ''}">${esc(x[1](r))}</td>`).join('')}${w ? `<td class="act"><button data-e="${i}">Ubah</button><button data-d="${i}">Hapus</button></td>` : ''}</tr>`).join('') || '<tr><td colspan="9">Belum ada data</td></tr>'}</tbody></table></div>${k === 'transaksi' && rows.length === 300 ? '<p class="mut">Menampilkan 300 transaksi terbaru.</p>' : ''}`;
+  const isTransactions = k === 'transaksi';
+  box.innerHTML = `<div class="top"><h1>${c.t}</h1>${w ? '<button class="btn" id="add">+ Tambah</button>' : ''}</div><div class="card tbl">${isTransactions ? `<div class="tx-list-tools"><label class="tx-search"><span class="sr-only">Cari transaksi</span>${ico('search')}<input id="tx-search" type="search" placeholder="Cari transaksi..." autocomplete="off"></label><p class="mut" id="tx-search-count" aria-live="polite"></p></div>` : ''}<table><thead><tr>${c.cols.map(x => `<th class="${x[2] || ''}">${x[0]}</th>`).join('')}${w ? '<th></th>' : ''}</tr></thead><tbody id="list-rows"></tbody></table></div>`;
+  const tbody = $('#list-rows');
+  let allRows = rows, allRowsLoaded = rows.length < 300, allRowsRequest = null;
+  const renderRows = (term, sourceRows) => {
+    const query = term.trim().toLocaleLowerCase('id-ID');
+    const digits = query.replace(/\D/g, '');
+    const filtered = sourceRows.map((r, i) => ({ r, i })).filter(({ r }) => {
+      if (!query) return true;
+      const values = [r.tanggal, tgl(r.tanggal), r.jenis, r.kategori && r.kategori.nama, r.keterangan, r.bank && r.bank.nama, rp(r.nominal)];
+      const text = values.filter(Boolean).join(' ').toLocaleLowerCase('id-ID');
+      const numberText = values.filter(Boolean).join('').replace(/\D/g, '');
+      return text.includes(query) || (digits.length >= 3 && numberText.includes(digits));
+    });
+    tbody.innerHTML = filtered.map(({ r, i }) => `<tr>${c.cols.map(x => `<td class="${x[2] || ''}">${esc(x[1](r))}</td>`).join('')}${w ? `<td class="act"><button data-e="${i}">Ubah</button><button data-d="${i}">Hapus</button></td>` : ''}</tr>`).join('') || `<tr><td colspan="${c.cols.length + (w ? 1 : 0)}">${query ? 'Tidak ada transaksi yang cocok.' : 'Belum ada data'}</td></tr>`;
+    if (isTransactions) $('#tx-search-count').textContent = query ? `${filtered.length} transaksi ditemukan` : (rows.length === 300 ? 'Menampilkan 300 terbaru. Cari untuk menelusuri seluruh riwayat.' : `${rows.length} transaksi`);
+  };
+  renderRows('', rows);
+  if (isTransactions) $('#tx-search').addEventListener('input', async e => {
+    const term = e.target.value, search = term.trim();
+    if (search || allRowsRequest) {
+      $('#tx-search-count').textContent = 'Memuat seluruh riwayat transaksi...';
+      try {
+        if (!allRowsLoaded) {
+          if (!allRowsRequest) allRowsRequest = all(path.replace('&limit=300', '')).then(data => {
+            allRows = data;
+            allRowsLoaded = true;
+            return data;
+          }).catch(error => {
+            allRowsRequest = null;
+            throw error;
+          });
+          await allRowsRequest;
+        }
+      } catch (error) {
+        $('#tx-search-count').textContent = 'Gagal memuat riwayat transaksi: ' + error.message;
+        return;
+      }
+    }
+    renderRows(term, search ? allRows : rows);
+  });
   const form = async r => {
     const f = [];
     for (const [key, lab, type, src] of c.f) {
@@ -230,11 +271,13 @@ async function crud(k, box, q) {
   };
   if (w) {
     $('#add').onclick = () => form(null);
-    box.querySelectorAll('[data-e]').forEach(b => b.onclick = () => form(rows[+b.dataset.e]));
-    box.querySelectorAll('[data-d]').forEach(b => b.onclick = async () => {
+    tbody.onclick = async e => {
+      const button = e.target.closest('[data-e], [data-d]');
+      if (!button) return;
+      if (button.hasAttribute('data-e')) return form(rows[+button.dataset.e]);
       if (!confirm('Hapus data ini?')) return;
-      try { await api(c.sel.split('?')[0] + '?id=eq.' + rows[+b.dataset.d].id, { method: 'DELETE' }); render(); } catch (e) { alert(e.message); }
-    });
+      try { await api(c.sel.split('?')[0] + '?id=eq.' + rows[+button.dataset.d].id, { method: 'DELETE' }); render(); } catch (e) { alert(e.message); }
+    };
     if (k === 'transaksi' && q.get('tambah')) { history.replaceState(null, '', '#/transaksi'); form(null); }
   }
 }
