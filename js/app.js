@@ -21,6 +21,7 @@ const IC = {
   bank: '<path d="M3 10l9-6 9 6M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18"/>',
   report: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 12h5M10 16h5"/>',
   filter: '<path d="M4 5h16l-6.5 7v5l-3 2v-7z"/>',
+  add: '<path d="M12 5v14M5 12h14"/>',
   more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
   password: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1-1.6 2.8-.2-.1a1.7 1.7 0 00-1.8.1 1.7 1.7 0 00-.9 1.5v.2h-3.2v-.2a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.8-.1l-.2.1-1.6-2.8.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H6v-3.2h.2a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1 1.6-2.8.2.1a1.7 1.7 0 001.8-.1 1.7 1.7 0 00.9-1.5V3h3.2v.2a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8.1l.2-.1 1.6 2.8-.1.1a1.7 1.7 0 00-.3 1.9 1.7 1.7 0 001.5 1h.2v3.2h-.2a1.7 1.7 0 00-1.5 1z"/>',
@@ -129,8 +130,8 @@ ${A('pengaturan', 'Pengaturan', 'settings', ['pengaturan', 'password'].includes(
 <nav class="mobile-nav" aria-label="Navigasi mobile">
 ${A('dashboard', 'Ringkasan', 'dashboard', name === 'dashboard')}
 ${A('transaksi', 'Transaksi', 'transaksi', name === 'transaksi')}
+<a href="#/transaksi?tambah=1" class="mobile-add" aria-label="Tambah transaksi" title="Tambah transaksi">${ico('add')}<span>Tambah</span></a>
 ${A('laporan', 'Laporan', 'report', name === 'laporan')}
-${A('pengaturan', 'Pengaturan', 'settings', ['pengaturan', 'password'].includes(name))}
 <button id="more" type="button" aria-expanded="false">${ico('more')}<span>Lainnya</span></button>
 </nav>`;
 }
@@ -317,7 +318,7 @@ PAGES.dashboard = async (box, q) => {
   box.innerHTML = `<div class="top"><div><h1>Ringkasan Kas</h1><p class="mut">${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p></div>
 <div class="ctl"><div class="seg"><a href="#/dashboard?p=tahun&y=${Y}" class="${per === 'tahun' ? 'on' : ''}">Tahunan</a><a href="#/dashboard?p=bulan&y=${Y}&m=${M}" class="${per === 'bulan' ? 'on' : ''}">Bulanan</a></div>
 <div class="period-selectors ${per === 'bulan' ? 'month-view' : 'year-view'}">${per === 'bulan' ? `<select id="sm" class="month" aria-label="Bulan">${months}</select>` : ''}<select id="sy" class="year" aria-label="Tahun">${years}</select><button class="filter-btn" id="apply-period" type="button" aria-label="Terapkan filter cashflow" title="Terapkan filter">${ico('filter')}<span>Terapkan</span></button></div>
-<a class="btn" href="#/transaksi?tambah=1" style="display:grid;place-items:center">+ Transaksi baru</a></div></div>
+<a class="btn desktop-add" href="#/transaksi?tambah=1">+ Transaksi baru</a></div></div>
 <div class="kpi"><div class="card hero"><p class="k"><span class="kpi-icon">${ico('wallet')}</span>Saldo Kas</p><p class="v">${rp(bk.reduce((t, x) => t + +x.saldo, 0))}</p><p class="s">Total semua rekening dan cash</p></div>
 <div class="card"><p class="k"><span class="kpi-icon">${ico('income')}</span>Pemasukan</p><p class="v pos">${rp(I)}</p><p class="s">${lbl}</p></div>
 <div class="card"><p class="k"><span class="kpi-icon orange">${ico('expense')}</span>Pengeluaran</p><p class="v neg">${rp(E)}</p><p class="s">${lbl}</p></div>
