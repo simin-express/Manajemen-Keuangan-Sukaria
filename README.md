@@ -37,9 +37,10 @@ Authentication > Users > Add user (Auto Confirm). Pengguna baru otomatis berleve
 
 ## Dashboard dan laporan
 - Dashboard dibuka dalam tampilan bulanan dengan cash flow harian. Filter bulan dan tahun diterapkan melalui tombol ikon filter.
-- Header dashboard menampilkan identitas Warung Sukaria, tanggal, dan periode aktif dalam panel ringkas.
+- Header dashboard menampilkan judul dan tanggal di kiri, dengan kontrol periode serta aksi transaksi yang ringkas di kanan.
 - Di HP, toolbar bawah menampilkan Ringkasan, Transaksi, tombol tambah transaksi di tengah, Laporan, dan Lainnya.
 - Halaman **Laporan** tersedia di menu, dengan filter periode, rekening, jenis, dan kategori, serta opsi cetak atau simpan sebagai PDF.
+- Daftar transaksi menampilkan maksimal 300 transaksi terbaru. Saat pencarian digunakan, seluruh riwayat dimuat bertahap agar transaksi lama juga dapat ditemukan berdasarkan tanggal, jenis, kategori, keterangan, rekening, atau nominal.
 - Nominal transaksi ditampilkan dengan pemisah ribuan. Data nominal tetap disimpan sebagai angka di Supabase.
 - Menu **Data Transaksi** dapat dibuka untuk memilih transaksi, hutang, piutang, atau rekening. **Pengaturan** berisi ganti password dan, khusus administrator, unduh backup.
 
